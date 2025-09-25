@@ -1,0 +1,64 @@
+{% extends 'pressing/base.html' %}
+{% block content %}
+
+<!-- header-->
+
+
+  <div class="container">
+    <div class="row">
+        <center>
+            <div class="col-8">
+                <br/><br/><br/>
+                <h3>Commande non livrée</h3>
+                <br/><br/><br/>
+                <table class="table table-stripped table-hover table-bordered">
+                  <thead class="table-dark">
+                    <tr>
+                      <th scope="col">Commande</th>
+                      <th scope="col">Prix</th>
+                      <th scope="col">email du client</th>
+                      <th scope="col">date de réservation</th>
+                      <th scope="col">statut de livraison</th>
+                      <th scope="col">État de la commande</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in orders %}
+                    <tr>
+                      <td><a href="{% url 'orders' item.id %}">{{ item.id }}</a></td>
+                      <td>{{ item.amount_paid }}</td>
+                      <td>{{item.email }}</td>
+                      <td>{{item.date_ordered }}</td>
+                      <td>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="delivered-status" value="true">                                
+                            <input type="hidden" name="num" value="{{item.id}}">
+                            <button type="submit" class="btn btn-success btn-small">Marquer comme livrée</button>
+                        </form>
+                      </td>
+                      <td>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="num" value="{{ item.id }}">
+                            <select name="status" class="form-select">
+                                <option value="LINGE_RECU" {% if item.status == 'LINGE_RECU' %}selected{% endif %}>Linge Reçu</option>
+                                <option value="EN_COURS" {% if item.status == 'EN_COURS' %}selected{% endif %}>En Cours</option>
+                                <option value="PRET_A_LIVRER" {% if item.status == 'PRET_A_LIVRER' %}selected{% endif %}>Prêt à Livrer</option>
+                            </select>
+                    </td>
+                    <td>
+                      <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                      </form>
+                    </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+                <br/><br/><br/><br/><br/><br/>
+            </div>
+        </center>
+    </div>
+  </div>
+
+  {% endblock %}

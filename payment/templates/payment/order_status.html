@@ -1,0 +1,92 @@
+{% extends "pressing/base.html" %}
+
+{% block title %}Suivi de commande{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Suivi de vos commandes</h2>
+
+    {% if orders %}
+        {% for order in orders %}
+        <div class="order-card mb-4 p-3 border rounded shadow-sm" id="order-{{ order.id }}">
+            <p class="text-center">Commande N° <strong>{{ order.id }}</strong></p>
+            
+            <!-- Statut -->
+            <p class="text-center">Statut actuel : <span class="status-text">{{ order.status }}</span></p>
+
+            <!-- Barre de progression -->
+            <div class="progress">
+                <div class="progress-bar 
+                    {% if order.status == 'LINGE_RECU' %} bg-danger 
+                    {% elif order.status == 'EN_COURS' %} bg-warning 
+                    {% elif order.status == 'PRET_A_LIVRER' %} bg-success 
+                    {% endif %}" 
+                    role="progressbar" 
+                    style="width: 
+                    {% if order.status == 'LINGE_RECU' %}33%
+                    {% elif order.status == 'EN_COURS' %}66%
+                    {% elif order.status == 'PRET_A_LIVRER' %}100%
+                    {% else %}0{% endif %}%;" 
+                    aria-valuenow="{% if order.status == 'LINGE_RECU' %}33
+                    {% elif order.status == 'EN_COURS' %}66
+                    {% elif order.status == 'PRET_A_LIVRER' %}100
+                    {% else %}0{% endif %}" 
+                    aria-valuemin="0" aria-valuemax="100">
+                    {{ order.status }}
+                </div>
+            </div>
+
+            <!-- Message en fonction du statut -->
+            <p class="text-center mt-3 order-message">
+                {% if order.status == "LINGE_RECU" %}
+                    Votre linge a été reçu et est en attente de nettoyage.
+                {% elif order.status == "EN_COURS" %}
+                    Votre linge est en cours de nettoyage.
+                {% elif order.status == "PRET_A_LIVRER" %}
+                    Votre linge est prêt à être porté ou livré !
+                {% endif %}
+            </p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-center">Vous n'avez aucune commande en cours.</p>
+    {% endif %}
+</div>
+
+<!-- JavaScript pour mise à jour dynamique -->
+<script>
+    function updateOrderStatus() {
+        fetch(`/get_orders_status/`)
+            .then(response => response.json())
+            .then(data => {
+                data.orders.forEach(order => {
+                    let orderCard = document.querySelector(`#order-${order.id}`);
+                    
+                    if (orderCard) {
+                        let progressBar = orderCard.querySelector(".progress-bar");
+                        let statusText = orderCard.querySelector(".status-text");
+                        let orderMessage = orderCard.querySelector(".order-message");
+
+                        let statusInfo = {
+                            "LINGE_RECU": { width: "33%", bgColor: "bg-danger", message: "Votre linge a été reçu et est en attente de nettoyage." },
+                            "EN_COURS": { width: "66%", bgColor: "bg-warning", message: "Votre linge est en cours de nettoyage." },
+                            "PRET_A_LIVRER": { width: "100%", bgColor: "bg-success", message: "Votre linge est prêt à être porté ou livré !" },
+                        };
+
+                        let newStatus = statusInfo[order.status] || { width: "0%", bgColor: "bg-secondary", message: "Commande en attente" };
+
+                        progressBar.style.width = newStatus.width;
+                        progressBar.className = "progress-bar " + newStatus.bgColor;
+                        progressBar.innerText = order.status;
+                        statusText.innerText = order.status;
+                        orderMessage.innerText = newStatus.message;
+                    }
+                });
+            })
+            .catch(error => console.error("Erreur lors de la mise à jour du statut:", error));
+    }
+
+    setInterval(updateOrderStatus, 5000);
+</script>
+
+{% endblock %}

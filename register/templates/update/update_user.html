@@ -1,0 +1,47 @@
+{% extends "pressing/base.html" %}
+
+{% block title %}Mettre à jour votre profil{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="text-center mb-4">Mettre à jour vos informations</h2>
+
+            <!-- Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Formulaire de mise à jour des informations -->
+            <form method="POST" class="form-group">
+                {% csrf_token %}
+
+                <fieldset>
+                    <legend>Informations personnelles</legend>
+                    {{ user_form.as_p }}
+                    <button type="submit" name="update_info" class="btn btn-success">Mettre à jour</button>
+                </fieldset>
+            </form>
+
+            <hr class="my-5">
+
+            <h3 class="text-center">Modifier votre mot de passe</h3>
+
+            <!-- Formulaire de mise à jour du mot de passe -->
+            <form method="POST" class="form-group">
+                {% csrf_token %}
+
+                <fieldset>
+                    <legend>Changer votre mot de passe</legend>
+                    {{ password_form.as_p }}
+                    <button type="submit" name="update_password" class="btn btn-outline-success">Mettre à jour le mot de passe</button>
+                </fieldset>
+            </form>
+            <br/><br/><br/><br/>
+        </div>
+    </div>
+</div>
+{% endblock %}

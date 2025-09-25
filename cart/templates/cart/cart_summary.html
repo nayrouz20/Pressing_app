@@ -1,0 +1,78 @@
+{% extends 'pressing/base.html' %}
+
+{% block content %}
+        <!-- Header-->
+        <header class="bg-dark py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h3 class="display-4 fw-bolder">votre panier</h3>
+                </div>
+            </div>
+        </header>
+        <br/>
+        <div class="container my-5 px-15">
+    {% for Clothes in cart_clothes %}
+    <div class="card mb-3 shadow-sm">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ Clothes.image.url }}" class="img-fluid rounded-start" alt="..." style="width: 90%; height: 265px;">
+            </div>
+            <div class="col-md-8">
+                <div class="cart-body">
+                    <center>
+                        <br/><br/>
+                        <h5 class="cart-title">{{ Clothes.name }}</h5>
+                        <br/>
+                        
+                        <p class="card-text text-justify">{{ Clothes.description }} - {{ Clothes.price }} DT</p>
+                        
+                        {% with clothes_id=Clothes.id|stringformat:"s" %}
+                        {% for key, value in quantities.items %}
+                            {% if key == clothes_id|slugify %}
+                                Quantité sélectionnée : {{ value }}
+                            {% endif %}
+                        {% endfor %}
+                        {% endwith %}
+
+                        <br/><br/>
+                        <button type="button" data-index="{{ Clothes.id }}" class="btn btn-danger delete-clothes">Supprimer</button>
+                        <br/><br/>
+
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <div align="right">
+        <h3>Prix total : {{ totals }} DT</h3>
+        <br/><br/>
+        <a href="{% url 'billing_info' %}" class="btn btn-success">Détails de la commande</a>
+    </div>
+</div>
+
+        <br/><br/><br/><br/><br/><br/><br/><br/><br/>        
+    
+
+<script>
+$(document).on('click', '.delete-clothes', function(e) {
+    e.preventDefault();
+
+    let clothesId = $(this).data('index');  // Retrieve clothes ID from data attribute
+    $.ajax({
+        type: 'POST',
+        url: '{% url "cart_delete" %}',  // Ensure the URL for updating cart is correct
+        data: {
+            clothes_id: clothesId,
+            action: 'post',
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function(response) {
+            location.reload();
+        },
+        error: function(response) {
+        }
+    });
+});
+</script>
+{% endblock %}

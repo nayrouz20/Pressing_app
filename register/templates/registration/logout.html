@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logout</title>
+</head>
+<body>
+    <h1>Logout</h1>
+    <button id="logout-button">Logout</button>
+
+    <script>
+        document.getElementById('logout-button').addEventListener('click', function() {
+            fetch('/logout/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}' // Ajout du token CSRF pour protéger contre les attaques CSRF
+                },
+                body: JSON.stringify({
+                    token: '{{ request.auth }}' // Utilisation du token d'authentification de la requête
+                })
+            }).then(response => {
+                if (response.ok) {
+                    console.log("Déconnexion réussie");
+                    window.location.href = '{% url "login" %}'; // Redirection vers la page de login après la déconnexion
+                } else {
+                    console.error("Erreur lors de la déconnexion");
+                }
+            }).catch(error => {
+                console.error("Erreur lors de la requête de déconnexion", error);
+            });
+        });
+    </script>
+</body>
+</html>

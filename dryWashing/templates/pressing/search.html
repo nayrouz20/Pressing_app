@@ -1,0 +1,75 @@
+{% extends 'pressing/base.html' %}
+{% block content %}
+        <!-- Header-->
+        <header class="bg-dark py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h3 class="display-4 fw-bolder">Selectionner votre linge</h3>
+                </div>
+            </div>
+        </header>
+<br/><br/>
+{% if searched %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-5 gy-4 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            {% for Clothes in searched %}
+            <div class="col mb-5">
+                <div class="card h-100">
+                    <!-- Image produit -->
+                   <!-- <img class="card-img-top" src="{{ Clothes.image.url }}" alt="..." style="width: 100%; height: 200px; object-fit: cover;" /> --!>
+                    <img class="card-img-top" src="{{ Clothes.image.url }}" alt="..." style="width: 100%; height: 200px;"/>
+                    <!-- Détails du produit -->
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <h5 class="fw-bolder">{{ Clothes.name }}</h5>
+                            <h6>{{ Clothes.description }}</h6>
+                            {{ Clothes.price }} DT
+                        </div>
+                    </div>
+                    <!-- Sélection de la quantité -->
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="me-2">Quantité :</div>
+                        <div>
+                            <select class="form-select form-select-sm" id="select{{ Clothes.id }}">              
+                                        
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Actions -->
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="d-flex align-items-center gap-2">
+                            <button type="button" class="btn btn-outline-dark w-100" id="add-cart" value="{{ Clothes.id }}">Ajouter au panier</button>
+                            <button type="button" class="btn btn-outline-dark w-100 update-cart" data-index="{{ Clothes.id }}">Modifier</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% else %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li class="alert alert-{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+{% endif %}
+
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "pressing/base.html" %}
+
+{% block title %}Mettre à jour votre compte{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="text-center mb-4">Mettre à jour vos informations</h2>
+            <form method="POST" class="form-group mt-4" action="{% url 'update_info' %}">
+                {% csrf_token %}
+                
+                <!-- Formulaire d'utilisateur -->
+                {{ form.as_p }}
+                <br/><br/>
+                <strong>Votre linge sera livré à l'adresse entrée ci-dessous</strong> 
+                <br/><br/>
+                <!-- Formulaire d'adresse -->
+                {{ shipping_form.as_p }}
+                <br/>
+
+                <!-- Bouton de soumission -->
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-success">Mettre à jour vos informations</button>
+                </div>            </form>
+                <br/><br/><br/><br/><br/><br/><br/>
+            <!-- Messages d'erreur ou de succès -->
+            {% if messages %}
+                <ul class="messages mt-4">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

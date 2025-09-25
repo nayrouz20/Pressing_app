@@ -1,0 +1,49 @@
+{% extends 'pressing/base.html' %}
+{% block content %}
+
+<!-- header-->
+
+
+  <div class="container">
+    <div class="row">
+        <center>
+            <div class="col-8">
+                <br/><br/><br/>
+                <h3>Commande livrée</h3>
+                <br/><br/><br/>
+                <table class="table table-stripped table-hover table-bordered">
+                  <thead class="table-dark">
+                    <tr>
+                      <th scope="col">Commande</th>
+                      <th scope="col">Prix</th>
+                      <th scope="col">email du client</th>
+                      <th scope="col">date de livraison</th>
+                      <th scope="col">statut de livraison</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in orders %}
+                    <tr>
+                      <td><a href="{% url 'orders' item.id %}">{{ item.id }}</a></td>
+                      <td>{{ item.amount_paid }}</td>
+                      <td>{{item.email }}</td>
+                      <td>{{item.date_delivered }}</td>
+                      <td>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="delivered-status" value="true">                                
+                            <input type="hidden" name="num" value="{{item.id}}">
+                            <button type="submit" class="btn btn-danger btn-small">Marquer comme non livrée</button>
+                        </form>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+                <br/><br/><br/><br/><br/><br/>
+            </div>
+        </center>
+    </div>
+  </div>
+
+  {% endblock %}

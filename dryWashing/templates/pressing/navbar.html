@@ -1,0 +1,82 @@
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" href="#!">
+            {% if request.resolver_match.url_name == "home" %}
+                Accueil
+            {% elif request.resolver_match.url_name == "register" %}
+                S'inscrire
+            {% elif request.resolver_match.url_name == "search" %}
+                Accueil
+            {% elif request.resolver_match.url_name == "update_user" %}
+                Profil utilisateur
+            {% elif request.resolver_match.url_name == "update_info" %}
+                Informations utilisateur
+            {% elif request.resolver_match.url_name == "delivered_dash" %}
+                Commande livrée
+            {% elif request.resolver_match.url_name == "not_delivered_dash" %}
+                Commande non livrée
+            {% elif request.resolver_match.url_name == "login" %}
+                Connexion
+            {% elif request.resolver_match.url_name == "logout" %}
+                Déconnexion
+            {% elif request.resolver_match.url_name == "cart_summary" %}
+                Panier
+            {% else %}
+                Pressing
+            {% endif %}
+        </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                {% if user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'home' %}">Accueil</a></li>
+
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Profil</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{%url 'update_user'%}">profil utilisateur</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="{% url 'update_info'%}">informations sur l'utilisateur</a></li>
+                    </ul>
+                </li>
+                    {% if user.is_superuser %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Commande</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{%url 'delivered_dash'%}">Commande livrée</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="{% url 'not_delivered_dash'%}">Commande non livrée</a></li>
+                    </ul>
+                </li>
+                    {% endif %}
+                <li class="nav-item">
+                    {% if latest_order %}
+                    <a href="{% url 'order_status'  %}">Suivi de commande</a>
+                    {% else %}
+                    <a class="nav-link disabled" href="#">Aucune commande en cours</a>
+                {% endif %}
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Déconnexion </a></li>
+            {% else %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Connexion</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">s'inscrire</a></li>
+            {% endif %}
+
+            </ul>
+            {% if request.resolver_match.url_name == 'home' or request.resolver_match.url_name == 'search' %}
+            <form class="d-flex me-3" method="POST" action="{% url 'search' %}">
+                {% csrf_token %}
+                <input class="form-control me-2" type="search" placeholder="Rechercher..." name="searched" required>
+                <button class="btn btn-outline-secondary" type="submit">Chercher</button>
+            </form>
+            {% endif %}
+            <a href="{% url 'cart_summary' %}" class="btn btn-outline-dark">
+                <i class="bi-cart-fill me-1"></i> Panier
+                <span class="badge bg-dark text-white ms-1 rounded-pill" id="cart_quantity">{{ cart|length }}</span>
+            </a>
+
+        </div>
+    </div>
+</nav>

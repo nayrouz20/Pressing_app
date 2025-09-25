@@ -1,0 +1,67 @@
+{% extends 'pressing/base.html' %}
+
+{% block content %}
+        <!-- Header-->
+        <header class="bg-dark py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h3 class="display-4 fw-bolder">processus de nettoyage de votre linge</h3>
+                </div>
+            </div>
+        </header>
+        <br/>
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                  Order summary
+                </div>
+                <div class="card-body">
+                {% for Clothes in cart_clothes %}
+                    <p class="card-text text-justify">{{ Clothes.name }} : {{ Clothes.description }} - {{ Clothes.price }} DT
+                        <br/>
+                        {% with clothes_id=Clothes.id|stringformat:"s" %}
+                        {% for key, value in quantities.items %}
+                            {% if key == clothes_id|slugify %}
+                               <small> Quantité sélectionnée : {{ value }} </small>
+                            {% endif %}
+                        {% endfor %}
+                        {% endwith %}
+                {% endfor %}</p>
+                <h5>Prix total : {{ totals }} DT</h5>
+                </div>
+            </div>
+        </div>
+              <br/><br>
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    Billing Info
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'process_order' %}">
+                        {% csrf_token %}
+                    {% if shipping_info %}
+                        <ul>
+                            {% for key, value in shipping_info.items %}
+                                <li><strong>{{ key|title }}:</strong> {{ value }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>Aucune information de livraison n'a été fournie.</p>
+                    {% endif %}
+                </div>
+            </div>            
+        </div>
+              <br/>
+        <div class="container my-5 px-15" align="right">
+            <form method="POST" action="{% url 'process_order' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary">laver mon linge</button>
+            </form>
+                    </form>
+            
+        </div>
+            
+        <br/><br/><br/><br/><br/><br/><br/><br/><br/>        
+    
+{% endblock %}

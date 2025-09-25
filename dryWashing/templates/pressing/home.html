@@ -1,0 +1,125 @@
+{% extends 'pressing/base.html' %}
+
+{% block content %}
+        <!-- Header-->
+        <header class="bg-dark py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h3 class="display-4 fw-bolder">Selectionner votre linge</h3>
+                </div>
+            </div>
+        </header>
+        <!-- Section-->
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 mt-5">
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                    
+                    {% for Clothes in clothes %}
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Product image-->
+                            <img class="card-img-top" src="{{ Clothes.image.url }}" alt="..." style="width: 100%; height: 200px;"/>
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder"> {{Clothes.name}} </h5>
+                                    <h6> {{Clothes.description}} </h6>
+                                    <!-- Product price--> 
+                                    {{Clothes.price}} DT
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <div class="me-2">Quantité : </div>
+                                <div>
+                                    <select class="form-select form-select-sm" id="select{{ Clothes.id }}">              
+                                        
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                    </select>
+                            
+                                </div>
+                                <br/><br/><br/>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="d-flex align-items-center gap-2">
+                                    <button type="button" class="btn btn-outline-dark w-100" style="height: 60px;" value="{{ Clothes.id }}" id="add-cart">Ajouter au panier</button>
+                                    <button type="button" data-index="{{ Clothes.id }}" class="btn btn-outline-dark w-100 update-cart" style="height: 60px;">Modifier</button>
+                                </div>
+                            </div>
+                                            
+                        </div>
+                    </div>
+                    
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    
+
+        <script>
+            $(document).on('click', '[id^=add-cart]', function(e) {
+                e.preventDefault();
+                
+                let clothesId = $(this).val();  // Retrieve clothes ID from the button value
+                let quantity = $('#select' + clothesId).val();  // Get the selected quantity from the dropdown
+        
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "cart_add" %}',  // Make sure to replace this with the correct URL for cart_add
+                    data: {
+                        clothes_id: clothesId,
+                        clothes_qty: quantity,
+                        action: 'post',
+                        csrfmiddlewaretoken: '{{ csrf_token }}'  // Include CSRF token for security
+                    },
+                    success: function(response) {
+                        alert('Succès d\'ajout d\'article. Nombre totale d\'articles: ' + response.qty);
+                        location.reload();
+                    },
+                    error: function(response) {
+                        alert('Erreur d\'ajout d\'article');
+                    }
+                });
+            });
+        
+            // Update the cart when 'update-cart' button is clicked
+            $(document).on('click', '.update-cart', function(e) {
+                e.preventDefault();
+        
+                let clothesId = $(this).data('index');  // Retrieve clothes ID from data attribute
+                let quantity = $('#select' + clothesId).val();  // Get the selected quantity
+        
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "cart_update" %}',  // Ensure the URL for updating cart is correct
+                    data: {
+                        clothes_id: clothesId,
+                        clothes_qty: quantity,
+                        action: 'post',
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        alert('Quantité modifiée : ' + response.qty);
+                    },
+                    error: function(response) {
+                        alert('Erreur de modification');
+                    }
+                });
+            });
+        </script>
+        
+        
+{% endblock %}
+
+
