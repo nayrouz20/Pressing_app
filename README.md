@@ -30,7 +30,7 @@ Interface d’administration Django pour la gestion des commandes et des vêteme
 
 🚀 Installation et exécution
 1️⃣ Cloner le projet
-git clone https://github.com/votre-nom-utilisateur/pressing-app.git
+git clone https://github.com/nayrouz20/pressing-app.git
 cd pressing-app
 
 2️⃣ Créer un environnement virtuel
@@ -61,3 +61,4 @@ pressing-app/
 │── db.sqlite3           # Base de données SQLite
 │── manage.py            # Fichier principal Django
 │── requirements.txt     # Dépendances Python
+
